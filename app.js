@@ -9,7 +9,7 @@ import {
     submitExam,
     practiceIncorrect
 } from "./engine/examEngine.js"
-
+import { showHistory } from "./ui/historyUI.js"
 
 // =======================
 // INITIALISE APP
@@ -133,6 +133,27 @@ submitBtn.addEventListener("click", () => {
 
 })
 
+
+// ========================
+// Load History Page    
+// ======================    
+const historyBtn = document.getElementById("historyBtn")
+
+if(historyBtn){
+
+    historyBtn.addEventListener("click",()=>{
+
+        document.getElementById("startMenu").style.display = "none"
+
+        showHistory()
+
+    })
+
+}
+
+
+
+    
 // =======================
 // PREVENT ACCIDENTAL REFRESH
 // =======================
@@ -160,6 +181,7 @@ window.addEventListener("beforeunload", function (e) {
 })
     
 })
+
 
 
 
