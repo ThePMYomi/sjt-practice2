@@ -470,6 +470,36 @@ export function toggleFlag(questionIndex){
 
 }
 
+// ===========================
+// SAVE EXAM ATTEMPT
+// =======================
+
+function saveExamAttempt(score,maxScore){
+
+    const history =
+        JSON.parse(localStorage.getItem("examHistory")) || []
+
+    const attempt = {
+
+        id: "exam_" + Date.now(),
+        date: new Date().toISOString(),
+
+        score: score,
+        maxScore: maxScore,
+        percent: Math.round((score/maxScore)*100),
+
+        questions: examQuestions,
+        userAnswers: userAnswers
+
+    }
+
+    history.push(attempt)
+
+    localStorage.setItem(
+        "examHistory",
+        JSON.stringify(history)
+    )
+}
 
 
 // =======================
@@ -523,6 +553,8 @@ export function submitExam(){
     )
 
 
+
+    saveExamAttempt(totalScore,maxScore)
 
     showResults(totalScore,maxScore)
 
@@ -775,3 +807,4 @@ export function getUserAnswers(){
 export function getFlaggedQuestions(){
     return flaggedQuestions
 }
+
