@@ -83,3 +83,50 @@ window.reviewExam = function(examId){
     })
 
 }
+
+export function renderPerformanceChart(){
+
+    const history =
+        JSON.parse(localStorage.getItem("examHistory")) || []
+
+    if(history.length === 0) return
+
+    const canvas = document.createElement("canvas")
+
+    canvas.id = "performanceChart"
+
+    document.getElementById("quiz").appendChild(canvas)
+
+    const ctx = canvas.getContext("2d")
+
+    const labels =
+        history.map(h=> new Date(h.date).toLocaleDateString())
+
+    const scores =
+        history.map(h=> h.percent)
+
+    new Chart(ctx,{
+
+        type:"line",
+
+        data:{
+
+            labels:labels,
+
+            datasets:[{
+
+                label:"Score %",
+
+                data:scores,
+
+                borderColor:"#2c7be5",
+
+                fill:false
+
+            }]
+
+        }
+
+    })
+
+}
