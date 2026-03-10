@@ -146,21 +146,52 @@ function renderCompetencyAnalytics(){
         exam.questions.forEach((q,i)=>{
 
             if(!stats[q.competency]){
-                stats[q.competency] = {correct:0,total:0}
+                stats[q.competency] = {earned:0,max:0}
             }
 
             const userAnswer = exam.userAnswers[i]
 
-            if(userAnswer){
+            if(!userAnswer) return
 
-                const correctAnswer = q.answer
+            let earned = 0
+            let max = 0
 
-                if(JSON.stringify(userAnswer) === JSON.stringify(correctAnswer)){
-                    stats[q.competency].correct++
-                }
+            if(q.type === "ranking"){
 
-                stats[q.competency].total++
+                max = 20
+
+                q.answer.forEach((option, correctIndex) => {
+
+                    const userIndex = userAnswer.indexOf(option)
+
+                    if(userIndex === -1) return
+
+                    const distance =
+                        Math.abs(correctIndex - userIndex)
+
+                    const points =
+                        Math.max(0, 4 - distance)
+
+                    earned += points
+
+                })
+
             }
+
+            if(q.type === "best3"){
+
+                max = 12
+
+                userAnswer.forEach(answer=>{
+                    if(q.answer.includes(answer)){
+                        earned += 4
+                    }
+                })
+
+            }
+
+            stats[q.competency].earned += earned
+            stats[q.competency].max += max
 
         })
 
@@ -172,21 +203,24 @@ function renderCompetencyAnalytics(){
 
     Object.entries(stats).forEach(([comp,data])=>{
 
+        if(data.max === 0) return
+
         const percent =
-            Math.round((data.correct/data.total)*100)
+            Math.round((data.earned/data.max)*100)
 
         const row = document.createElement("div")
 
         row.className = "competency-row"
 
         row.innerHTML = `
-            <div class="competency-label">${comp} (${percent}%)</div>
-            <div class="competency-bar">
-                <div class="competency-fill" style="width:${percent}%"></div>
-            </div>
+        <div class="competency-label">${comp} (${percent}%)</div>
+        <div class="competency-bar">
+            <div class="competency-fill" style="width:${percent}%"></div>
+        </div>
         `
 
         container.appendChild(row)
+        container.style.marginTop = "40px"
 
     })
 
