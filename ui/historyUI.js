@@ -40,7 +40,7 @@ export function showHistory(){
             quiz.appendChild(div)
 
         })
-
+        renderPerformanceChart()
 }
 
 
