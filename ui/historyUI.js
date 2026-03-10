@@ -42,3 +42,44 @@ export function showHistory(){
         })
 
 }
+
+
+window.reviewExam = function(examId){
+
+    const history =
+        JSON.parse(localStorage.getItem("examHistory")) || []
+
+    const exam =
+        history.find(e=>e.id === examId)
+
+    if(!exam) return
+
+    const quiz = document.getElementById("quiz")
+
+    quiz.innerHTML = "<h2>Exam Review</h2>"
+
+    exam.questions.forEach((q,i)=>{
+
+        const userAnswer = exam.userAnswers[i]
+
+        let html = `<div class="review-question">`
+
+        html += `<p><strong>Scenario:</strong> ${q.scenario}</p>`
+
+        html += `<p><strong>Your Answer:</strong> ${
+            Array.isArray(userAnswer)
+            ? userAnswer.join(", ")
+            : userAnswer || "None"
+        }</p>`
+
+        html += `<p><strong>Correct Answer:</strong> ${q.answer}</p>`
+
+        html += `<p><strong>Explanation:</strong><br>${q.explanation}</p>`
+
+        html += `</div>`
+
+        quiz.innerHTML += html
+
+    })
+
+}
