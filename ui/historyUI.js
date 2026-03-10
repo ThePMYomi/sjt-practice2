@@ -41,6 +41,7 @@ export function showHistory(){
 
         })
         renderPerformanceChart()
+        renderCompetencyAnalytics()
 }
 
 
@@ -128,5 +129,67 @@ export function renderPerformanceChart(){
         }
 
     })
+
+}
+
+function renderCompetencyAnalytics(){
+
+    const history =
+        JSON.parse(localStorage.getItem("examHistory")) || []
+
+    if(history.length === 0) return
+
+    const stats = {}
+
+    history.forEach(exam=>{
+
+        exam.questions.forEach((q,i)=>{
+
+            if(!stats[q.competency]){
+                stats[q.competency] = {correct:0,total:0}
+            }
+
+            const userAnswer = exam.userAnswers[i]
+
+            if(userAnswer){
+
+                const correctAnswer = q.answer
+
+                if(JSON.stringify(userAnswer) === JSON.stringify(correctAnswer)){
+                    stats[q.competency].correct++
+                }
+
+                stats[q.competency].total++
+            }
+
+        })
+
+    })
+
+    const container = document.createElement("div")
+
+    container.innerHTML = "<h3>Competency Performance</h3>"
+
+    Object.entries(stats).forEach(([comp,data])=>{
+
+        const percent =
+            Math.round((data.correct/data.total)*100)
+
+        const row = document.createElement("div")
+
+        row.className = "competency-row"
+
+        row.innerHTML = `
+            <div class="competency-label">${comp} (${percent}%)</div>
+            <div class="competency-bar">
+                <div class="competency-fill" style="width:${percent}%"></div>
+            </div>
+        `
+
+        container.appendChild(row)
+
+    })
+
+    document.getElementById("quiz").appendChild(container)
 
 }
